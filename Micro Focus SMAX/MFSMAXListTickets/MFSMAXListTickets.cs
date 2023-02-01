@@ -13,7 +13,7 @@ using System;
 
 namespace Ayehu.Sdk.ActivityCreation
 {
-	public class CustomActivity: IActivity
+	public class CustomActivity : IActivity
 	{
 		public string instanceURL;
 		public string tenantID;
@@ -40,8 +40,8 @@ namespace Ayehu.Sdk.ActivityCreation
 			try
 			{
 				System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
-				var tokenHttpWebRequest = (HttpWebRequest) WebRequest.Create(tokenURL);
+				
+				var tokenHttpWebRequest = (HttpWebRequest)WebRequest.Create(tokenURL);
 				tokenHttpWebRequest.ContentType = tokenContentType;
 				tokenHttpWebRequest.Accept = tokenAccept;
 				tokenHttpWebRequest.Method = tokenMethod;
@@ -52,7 +52,7 @@ namespace Ayehu.Sdk.ActivityCreation
 					tokenStreamWriter.Flush();
 					tokenStreamWriter.Close();
 
-					var tokenHttpResponse = (HttpWebResponse) tokenHttpWebRequest.GetResponse();
+					var tokenHttpResponse = (HttpWebResponse)tokenHttpWebRequest.GetResponse();
 
 					using(var tokenStreamReader = new StreamReader(tokenHttpResponse.GetResponseStream()))
 					{
@@ -60,7 +60,7 @@ namespace Ayehu.Sdk.ActivityCreation
 					}
 				}
 			}
-			catch (WebException e)
+			catch(WebException e)
 			{
 				throw new Exception(e.Message);
 			}
@@ -69,12 +69,12 @@ namespace Ayehu.Sdk.ActivityCreation
 
 			string apiURL = instanceURL + "/rest/" + tenantID + "/ems/" + recordType + "?layout=" + fields + "&size=" + maxResults + "&skip=" + offset.ToString();
 
-			if (!String.IsNullOrEmpty(filter))
+			if(!String.IsNullOrEmpty(filter))
 			{
 				apiURL += "&filter=" + filter;
 			}
 
-			if (customSorting == 1)
+			if(customSorting == 1)
 			{
 				apiURL += "&order=" + orderByField + " " + orderBy;
 			}
@@ -86,37 +86,37 @@ namespace Ayehu.Sdk.ActivityCreation
 			try
 			{
 				System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-
-				var httpWebRequest = (HttpWebRequest) WebRequest.Create(apiURL);
+				
+				var httpWebRequest = (HttpWebRequest)WebRequest.Create(apiURL);
 				httpWebRequest.ContentType = contentType;
 				httpWebRequest.Accept = accept;
 				httpWebRequest.Headers.Add("Cookie", "LWSSO_COOKIE_KEY=" + tokenResponseString);
 				httpWebRequest.Method = method;
 
-				var httpResponse = (HttpWebResponse) httpWebRequest.GetResponse();
+				var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
 
 				using(var streamReader = new StreamReader(httpResponse.GetResponseStream()))
 				{
 					var response = streamReader.ReadToEnd();
 
 					JObject jsonResults = JObject.Parse(response);
-					JArray records = (JArray) jsonResults["entities"];
+					JArray records = (JArray)jsonResults["entities"];
 
 					int recordCount = records.Count;
 
 					DataTable dt = new DataTable("resultSet");
 					DataTable dt2 = new DataTable("resultSet");
 
-					for (int i = 0; i < recordCount; i++)
+					for(int i = 0; i < recordCount; i ++)
 					{
 						var recordData = jsonResults["entities"][i]["properties"].ToString();
 						var res = ExposeJson(JObject.Parse(recordData))
-							.ToDictionary(q => q.Key, q => q.Value);
+									.ToDictionary(q => q.Key, q => q.Value);
 						dt.Merge(GetDataTable(res));
 
 						var recordData2 = jsonResults["entities"][i]["related_properties"].ToString();
 						var res2 = ExposeJson(JObject.Parse(recordData2))
-							.ToDictionary(q => q.Key, q => q.Value);
+								   .ToDictionary(q => q.Key, q => q.Value);
 						dt2.Merge(GetDataTable(res2));
 					}
 
@@ -126,7 +126,7 @@ namespace Ayehu.Sdk.ActivityCreation
 					{
 						foreach(DataColumn col in dt2.Columns)
 						{
-							if (!dt.Columns.Contains(col.ToString()))
+							if(!dt.Columns.Contains(col.ToString()))
 							{
 								dt.Columns.Add(col.ToString());
 							}
@@ -134,23 +134,23 @@ namespace Ayehu.Sdk.ActivityCreation
 							dt.Rows[rowCount][col.ToString()] = row[col].ToString();
 						}
 
-						rowCount++;
+						rowCount ++;
 					}
 
 					return this.GenerateActivityResult(dt);
 				}
 			}
-			catch (WebException e)
+			catch(WebException e)
 			{
 				throw new Exception(e.Message);
 			}
 		}
 
-		private IDictionary < string, string > ExposeJson(JObject jObject, string append = "")
+		private IDictionary<string, string> ExposeJson(JObject jObject, string append = "")
 		{
-			var result = new Dictionary < string, string > ();
+			var result = new Dictionary<string, string>();
 
-			foreach(var jProperty in jObject.Properties())
+			foreach (var jProperty in jObject.Properties())
 			{
 				var jToken = jProperty.Value;
 
@@ -168,12 +168,12 @@ namespace Ayehu.Sdk.ActivityCreation
 			return result;
 		}
 
-		private DataTable GetDataTable(IReadOnlyDictionary < string, string > columns)
+		private DataTable GetDataTable(IReadOnlyDictionary<string, string> columns)
 		{
 			DataTable dt = new DataTable("resultSet");
 			dt.Rows.Add(dt.NewRow());
 
-			foreach(var col in columns)
+			foreach (var col in columns)
 			{
 				dt.Columns.Add(col.Key);
 				dt.Rows[0][col.Key] = col.Value;

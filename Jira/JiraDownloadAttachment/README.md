@@ -1,8 +1,8 @@
 For the "Instance URL" field, the following are the default formats:
 <br>
 <ul>
-<li>On-premise instance - http:// SERVER_NAME :8080/rest/api/latest/</li>
-<li>Cloud instance - https:// SITE_NAME .atlassian.net/rest/api/latest/</li>
+<li>On-premise instance - http:// SERVER_NAME :8080</li>
+<li>Cloud instance - https:// SITE_NAME .atlassian.net</li>
 </ul>
 <br>
 In order to retrieve the attachment ID and attachment filename needed to execute this activity, you have two options.
@@ -43,6 +43,6 @@ Here, we see a key named "id" which will serve as our "Attachment ID".  We also 
 <br><br>
 In the <b>JiraDownloadFile</b> activity configuration, use only the folder path for the "Save Folder" field (e.g. "C:\my\folder\").  By default, the same filename from the Jira ticket will be used when saving.  You can optionally select the "Save attachment with a custom filename" checkbox and then specify that custom filename in the field that becomes enabled.
 <br><br>
-See the example below:
+See activity configuration example below:
 <br><br>
-<img src="https://raw.githubusercontent.com/Ayehu/custom-activities/master/Jira/JiraDownloadAttachment/Activity_Example_Screenshot.jpg">
+<img src="https://raw.githubusercontent.com/Ayehu/custom-activities/master/Jira/JiraDownloadAttachment/activity_screenshot.png">
